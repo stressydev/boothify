@@ -856,16 +856,15 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     const ctx = canvas.getContext('2d');
     
 
-    // Set canvas dimensions for photo strip
     const stripWidth = 450;
-    const borderWidth = 64;     // w-16 (matches UI)
-    const padding = 24;         // inner spacing
+    const borderWidth = 64;   // w-16
+    const padding = 64;       // px-16, matches preview
     const spacing = 12;
     const textHeight = 80;
-    
-    
-  // ✅ FIXED photo size (derived, not guessed)
-  const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
+
+    const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
+
+
     canvas.width = stripWidth;
     canvas.height = (photoSize * 4) + (spacing * 3) + padding * 2 + textHeight;
     
