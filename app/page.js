@@ -844,7 +844,7 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
   const [emailSent, setEmailSent] = useState(false);
   const stripRef = useRef(null);
 
-  const handleDownload = () => {
+    const handleDownload = () => {
     const stripElement = stripRef.current;
     if (!stripElement) {
       alert('Unable to generate download. Please try again.');
@@ -856,25 +856,23 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    // ✅ Original constants (preview)
+    // Original preview constants
     const STRIP_WIDTH = 450;
     const BORDER_WIDTH = 64;
     const PADDING = 64;
     const SPACING = 12;
     const TEXT_HEIGHT = 80;
 
-    // ✅ Scale constants
+    // Scale everything
     const stripWidth = STRIP_WIDTH * SCALE;
     const borderWidth = BORDER_WIDTH * SCALE;
     const padding = PADDING * SCALE;
     const spacing = SPACING * SCALE;
     const textHeight = TEXT_HEIGHT * SCALE;
 
-    // ✅ Photo size
     const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
-    const photoHeight = photoSize * (3 / 4); // 4:3 aspect ratio
+    const photoHeight = photoSize * (3 / 4);
 
-    // ✅ Canvas size
     canvas.width = stripWidth;
     canvas.height =
       photoHeight * photos.length +
@@ -882,55 +880,25 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       padding * 2 +
       textHeight;
 
-    // Scale the context so we can draw with original coordinates
-    ctx.scale(SCALE, SCALE);
-
     // Fill background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, STRIP_WIDTH, canvas.height / SCALE);
+    ctx.fillRect(0, 0, stripWidth, canvas.height);
 
-    // Draw borders if a custom border exists
-    if (settings.borderImage) {
-      const borderImg = new Image();
-      borderImg.crossOrigin = 'anonymous';
-      borderImg.onload = () => {
-        ctx.drawImage(borderImg, 0, 0, BORDER_WIDTH, canvas.height / SCALE); // left
-        ctx.drawImage(borderImg, STRIP_WIDTH - BORDER_WIDTH, 0, BORDER_WIDTH, canvas.height / SCALE); // right
-        drawPhotos();
-      };
-      borderImg.src = settings.borderImage;
-    } else {
-      drawDefaultBorder();
-      drawPhotos();
-    }
-
-    function drawDefaultBorder() {
-      const style = settings.borderStyle;
-      if (style === 'modern' || style === 'film') {
-        ctx.fillStyle = '#1f2937';
-      } else if (style === 'retro') {
-        ctx.fillStyle = '#fef3c7';
-      } else {
-        ctx.fillStyle = '#f3f4f6';
-      }
-      ctx.fillRect(0, 0, STRIP_WIDTH, canvas.height / SCALE);
-    }
-
-    function drawPhotos() {
+    const drawPhotos = () => {
       let loadedCount = 0;
-      const xOffset = BORDER_WIDTH + PADDING;
+      const xOffset = borderWidth + padding;
 
       photos.forEach((photoData, index) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
 
         img.onload = () => {
-          const y = PADDING + index * (photoHeight + SPACING);
+          const y = padding + index * (photoHeight + spacing);
 
+          // Draw the photo
           ctx.drawImage(img, xOffset, y, photoSize, photoHeight);
 
           loadedCount++;
-
           if (loadedCount === photos.length) {
             // Draw text
             const textColor =
@@ -941,12 +909,12 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
             ctx.fillStyle = textColor;
             ctx.textAlign = 'center';
             ctx.font = `bold ${18 * SCALE}px Arial`;
-            ctx.fillText(settings.customText, STRIP_WIDTH / 2, canvas.height / SCALE - 45);
+            ctx.fillText(settings.customText, stripWidth / 2, canvas.height - 45 * SCALE);
 
             ctx.font = `${14 * SCALE}px Arial`;
-            ctx.fillText(new Date().toLocaleDateString(), STRIP_WIDTH / 2, canvas.height / SCALE - 20);
+            ctx.fillText(new Date().toLocaleDateString(), stripWidth / 2, canvas.height - 20 * SCALE);
 
-            // Download
+            // Trigger download
             canvas.toBlob((blob) => {
               if (!blob) return alert('Download failed');
 
@@ -966,13 +934,35 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
 
         img.src = photoData;
       });
-    }
+    };
+
+    const drawBorders = () => {
+      if (settings.borderImage) {
+        const borderImg = new Image();
+        borderImg.crossOrigin = 'anonymous';
+        borderImg.onload = () => {
+          ctx.drawImage(borderImg, 0, 0, borderWidth, canvas.height); // left
+          ctx.drawImage(borderImg, stripWidth - borderWidth, 0, borderWidth, canvas.height); // right
+          drawPhotos();
+        };
+        borderImg.src = settings.borderImage;
+      } else {
+        const style = settings.borderStyle;
+        if (style === 'modern' || style === 'film') {
+          ctx.fillStyle = '#1f2937';
+        } else if (style === 'retro') {
+          ctx.fillStyle = '#fef3c7';
+        } else {
+          ctx.fillStyle = '#f3f4f6';
+        }
+        ctx.fillRect(0, 0, stripWidth, canvas.height);
+        drawPhotos();
+      }
+    };
+
+    drawBorders();
   };
 
-
-
-
-  
 
   const handleSendEmail = () => {
     setIsSending(true);
