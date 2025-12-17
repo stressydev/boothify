@@ -863,6 +863,9 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     const spacing = 12;
     const textHeight = 80;
     
+    
+  // ✅ FIXED photo size (derived, not guessed)
+  const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
     canvas.width = stripWidth;
     canvas.height = (photoSize * 4) + (spacing * 3) + padding * 2 + textHeight;
     
@@ -906,49 +909,64 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     function drawPhotos() {
       let loadedCount = 0;
       const xOffset = borderWidth + padding;
-      
+      const photoHeight = photoSize * (3 / 4); // make sure this is defined
+
       photos.forEach((photoData, index) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
+
         img.onload = () => {
-          const y = padding + (index * (photoSize + spacing));
-          ctx.drawImage(img, xOffset, y, photoSize, photoSize);
+          const y = padding + index * (photoHeight + spacing);
+
+          ctx.drawImage(
+            img,
+            xOffset,
+            y,
+            photoSize,
+            photoHeight
+          );
+
           loadedCount++;
-          
+
           if (loadedCount === photos.length) {
-            // Add text at bottom
-            const textColor = settings.borderStyle === 'modern' || settings.borderStyle === 'film' ? '#ffffff' : '#000000';
+            // Add text
+            const textColor =
+              settings.borderStyle === 'modern' ||
+              settings.borderStyle === 'film'
+                ? '#ffffff'
+                : '#000000';
+
             ctx.fillStyle = textColor;
             ctx.textAlign = 'center';
             ctx.font = 'bold 18px Arial';
             ctx.fillText(settings.customText, canvas.width / 2, canvas.height - 45);
+
             ctx.font = '14px Arial';
             ctx.fillText(new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 20);
-            
-            // Download
+
             canvas.toBlob((blob) => {
-              if (blob) {
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = `photobooth-strip-${Date.now()}.png`;
-                link.href = url;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-              } else {
-                alert('Download failed. Please try again.');
-              }
-            }, 'image/png');
+              if (!blob) return alert('Download failed');
+
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.download = `photobooth-strip-${Date.now()}.png`;
+              link.href = url;
+              link.click();
+              URL.revokeObjectURL(url);
+            });
           }
         };
+
         img.onerror = () => {
           alert('Failed to load photos. Please try again.');
         };
+
         img.src = photoData;
       });
-    }
-  };
+    }};
+
+
+  
 
   const handleSendEmail = () => {
     setIsSending(true);
