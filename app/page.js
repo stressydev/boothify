@@ -855,11 +855,11 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     
+
     // Set canvas dimensions for photo strip
     const stripWidth = 450;
-    const photoSize = 310; // Width of each photo area (450 - 2*70 for borders)
-    const borderWidth = 70;
-    const padding = 24;
+    const borderWidth = 64;     // w-16 (matches UI)
+    const padding = 24;         // inner spacing
     const spacing = 12;
     const textHeight = 80;
     
