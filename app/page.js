@@ -794,7 +794,8 @@ function PhotoStrip({ photos, settings }) {
             style={{ backgroundImage: `url(${settings.borderImage})` }}
           />
           
-          <div className="relative z-0 px-20 py-6">
+          <div   className="relative z-0 py-6 flex justify-center"
+            style={{ paddingLeft: '64px', paddingRight: '64px' }}>
             <div className="space-y-3">
               {photos.map((photo, index) => (
                 <div key={index} className="w-full aspect-square overflow-hidden bg-gray-100 rounded">
