@@ -507,28 +507,60 @@ function CameraView({ onPhotoTaken, countdownSeconds, currentPhotoIndex, isCaptu
 
   const capturePhoto = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return null;
-    
+
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
+
+    // Desired aspect ratio (same as preview container)
+    const targetAspect = 4 / 3;
+
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const videoAspect = videoWidth / videoHeight;
+
+    let sx, sy, sw, sh;
+
+    if (videoAspect > targetAspect) {
+      // Video is wider than target → crop sides
+      sh = videoHeight;
+      sw = sh * targetAspect;
+      sx = (videoWidth - sw) / 2;
+      sy = 0;
+    } else {
+      // Video is taller than target → crop top/bottom
+      sw = videoWidth;
+      sh = sw / targetAspect;
+      sx = 0;
+      sy = (videoHeight - sh) / 2;
+    }
+
+    // Output canvas size (matches preview ratio)
+    canvas.width = 1200;
+    canvas.height = 900;
+
     ctx.save();
+
     if (isMirrored) {
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
     }
-    
-    ctx.drawImage(video, 0, 0);
+
+    ctx.drawImage(
+      video,
+      sx, sy, sw, sh,          // source crop
+      0, 0, canvas.width, canvas.height // destination
+    );
+
     ctx.restore();
-    
+
+    // Flash effect
     setFlashActive(true);
     setTimeout(() => setFlashActive(false), 150);
-    
-    return canvas.toDataURL('image/jpeg', 0.9);
+
+    return canvas.toDataURL('image/jpeg', 0.92);
   }, [isMirrored]);
+
 
   const startCountdown = useCallback(() => {
     if (isCapturing) return;
