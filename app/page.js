@@ -851,20 +851,30 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       return;
     }
 
+    const SCALE = 3; // 3x higher resolution
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    // ✅ Correct constants to match preview
-    const stripWidth = 450;
-    const borderWidth = 64;   // w-16 in preview
-    const padding = 64;       // px-16 in preview
-    const spacing = 12;
-    const textHeight = 80;
+    // ✅ Original constants (preview)
+    const STRIP_WIDTH = 450;
+    const BORDER_WIDTH = 64;
+    const PADDING = 64;
+    const SPACING = 12;
+    const TEXT_HEIGHT = 80;
 
+    // ✅ Scale constants
+    const stripWidth = STRIP_WIDTH * SCALE;
+    const borderWidth = BORDER_WIDTH * SCALE;
+    const padding = PADDING * SCALE;
+    const spacing = SPACING * SCALE;
+    const textHeight = TEXT_HEIGHT * SCALE;
+
+    // ✅ Photo size
     const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
-    const photoHeight = photoSize * (3 / 4); // maintain 4:3 aspect ratio
+    const photoHeight = photoSize * (3 / 4); // 4:3 aspect ratio
 
-    // Correct canvas height
+    // ✅ Canvas size
     canvas.width = stripWidth;
     canvas.height =
       photoHeight * photos.length +
@@ -872,17 +882,20 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       padding * 2 +
       textHeight;
 
+    // Scale the context so we can draw with original coordinates
+    ctx.scale(SCALE, SCALE);
+
     // Fill background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, STRIP_WIDTH, canvas.height / SCALE);
 
     // Draw borders if a custom border exists
     if (settings.borderImage) {
       const borderImg = new Image();
       borderImg.crossOrigin = 'anonymous';
       borderImg.onload = () => {
-        ctx.drawImage(borderImg, 0, 0, borderWidth, canvas.height); // left
-        ctx.drawImage(borderImg, canvas.width - borderWidth, 0, borderWidth, canvas.height); // right
+        ctx.drawImage(borderImg, 0, 0, BORDER_WIDTH, canvas.height / SCALE); // left
+        ctx.drawImage(borderImg, STRIP_WIDTH - BORDER_WIDTH, 0, BORDER_WIDTH, canvas.height / SCALE); // right
         drawPhotos();
       };
       borderImg.src = settings.borderImage;
@@ -900,19 +913,19 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       } else {
         ctx.fillStyle = '#f3f4f6';
       }
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, STRIP_WIDTH, canvas.height / SCALE);
     }
 
     function drawPhotos() {
       let loadedCount = 0;
-      const xOffset = borderWidth + padding; // now perfectly centered
+      const xOffset = BORDER_WIDTH + PADDING;
 
       photos.forEach((photoData, index) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
 
         img.onload = () => {
-          const y = padding + index * (photoHeight + spacing);
+          const y = PADDING + index * (photoHeight + SPACING);
 
           ctx.drawImage(img, xOffset, y, photoSize, photoHeight);
 
@@ -927,13 +940,13 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
 
             ctx.fillStyle = textColor;
             ctx.textAlign = 'center';
-            ctx.font = 'bold 18px Arial';
-            ctx.fillText(settings.customText, canvas.width / 2, canvas.height - 45);
+            ctx.font = `bold ${18 * SCALE}px Arial`;
+            ctx.fillText(settings.customText, STRIP_WIDTH / 2, canvas.height / SCALE - 45);
 
-            ctx.font = '14px Arial';
-            ctx.fillText(new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 20);
+            ctx.font = `${14 * SCALE}px Arial`;
+            ctx.fillText(new Date().toLocaleDateString(), STRIP_WIDTH / 2, canvas.height / SCALE - 20);
 
-            // Trigger download
+            // Download
             canvas.toBlob((blob) => {
               if (!blob) return alert('Download failed');
 
@@ -955,6 +968,7 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       });
     }
   };
+
 
 
 
