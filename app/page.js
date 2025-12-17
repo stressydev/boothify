@@ -851,49 +851,47 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       return;
     }
 
-    // Create a canvas combining all photos
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
 
+    // ✅ Correct constants to match preview
     const stripWidth = 450;
-    const borderWidth = 64;   // w-16
-    const padding = 64;       // px-16, matches preview
+    const borderWidth = 64;   // w-16 in preview
+    const padding = 64;       // px-16 in preview
     const spacing = 12;
     const textHeight = 80;
 
     const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
+    const photoHeight = photoSize * (3 / 4); // maintain 4:3 aspect ratio
 
-
+    // Correct canvas height
     canvas.width = stripWidth;
-    canvas.height = (photoSize * 4) + (spacing * 3) + padding * 2 + textHeight;
-    
+    canvas.height =
+      photoHeight * photos.length +
+      spacing * (photos.length - 1) +
+      padding * 2 +
+      textHeight;
+
     // Fill background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw borders if custom border exists
+
+    // Draw borders if a custom border exists
     if (settings.borderImage) {
       const borderImg = new Image();
       borderImg.crossOrigin = 'anonymous';
       borderImg.onload = () => {
-        // Left border
-        ctx.drawImage(borderImg, 0, 0, borderWidth, canvas.height);
-        // Right border
-        ctx.drawImage(borderImg, canvas.width - borderWidth, 0, borderWidth, canvas.height);
-        
-        // Continue with photos
+        ctx.drawImage(borderImg, 0, 0, borderWidth, canvas.height); // left
+        ctx.drawImage(borderImg, canvas.width - borderWidth, 0, borderWidth, canvas.height); // right
         drawPhotos();
       };
       borderImg.src = settings.borderImage;
     } else {
-      // Draw default border style background
       drawDefaultBorder();
       drawPhotos();
     }
-    
+
     function drawDefaultBorder() {
-      // Apply gradient or solid color based on border style
       const style = settings.borderStyle;
       if (style === 'modern' || style === 'film') {
         ctx.fillStyle = '#1f2937';
@@ -904,11 +902,10 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       }
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-    
+
     function drawPhotos() {
       let loadedCount = 0;
-      const xOffset = borderWidth + padding;
-      const photoHeight = photoSize * (3 / 4); // make sure this is defined
+      const xOffset = borderWidth + padding; // now perfectly centered
 
       photos.forEach((photoData, index) => {
         const img = new Image();
@@ -917,21 +914,14 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
         img.onload = () => {
           const y = padding + index * (photoHeight + spacing);
 
-          ctx.drawImage(
-            img,
-            xOffset,
-            y,
-            photoSize,
-            photoHeight
-          );
+          ctx.drawImage(img, xOffset, y, photoSize, photoHeight);
 
           loadedCount++;
 
           if (loadedCount === photos.length) {
-            // Add text
+            // Draw text
             const textColor =
-              settings.borderStyle === 'modern' ||
-              settings.borderStyle === 'film'
+              settings.borderStyle === 'modern' || settings.borderStyle === 'film'
                 ? '#ffffff'
                 : '#000000';
 
@@ -943,6 +933,7 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
             ctx.font = '14px Arial';
             ctx.fillText(new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 20);
 
+            // Trigger download
             canvas.toBlob((blob) => {
               if (!blob) return alert('Download failed');
 
@@ -962,7 +953,9 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
 
         img.src = photoData;
       });
-    }};
+    }
+  };
+
 
 
   
