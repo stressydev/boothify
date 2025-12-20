@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, FlipHorizontal, Loader2, Download, Mail, RotateCcw, Settings, Upload, Type, Frame, X } from 'lucide-react';
+import { toPng } from 'html-to-image';
 
 // Main App Component
 export default function PhotoboothApp() {
@@ -8,7 +9,6 @@ export default function PhotoboothApp() {
   const [photos, setPhotos] = useState([]);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
   const [settings, setSettings] = useState({
     countdownSeconds: 3,
     borderImage: null,
@@ -35,29 +35,19 @@ export default function PhotoboothApp() {
     setIsCapturing(false);
   };
 
-  const handleEmailSubmit = (email) => {
-    setUserEmail(email);
-    setCurrentStep('settings');
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-600 via-purple-600 to-pink-500">
       <div className="container mx-auto px-4 py-8">
         {currentStep === 'welcome' && (
-          <WelcomeScreen onStart={() => setCurrentStep('email')} />
-        )}
-        
-        {currentStep === 'email' && (
-          <EmailEntryScreen onSubmit={handleEmailSubmit} onBack={() => setCurrentStep('welcome')} />
+          <WelcomeScreen onStart={() => setCurrentStep('settings')} />
         )}
         
         {currentStep === 'settings' && (
           <SettingsPanel 
             settings={settings} 
             setSettings={setSettings} 
-            userEmail={userEmail}
             onStart={() => setCurrentStep('camera')}
-            onBack={() => setCurrentStep('email')} 
+            onBack={() => setCurrentStep('welcome')} 
           />
         )}
         
@@ -77,7 +67,6 @@ export default function PhotoboothApp() {
           <CompleteScreen 
             photos={photos} 
             settings={settings} 
-            userEmail={userEmail}
             onRestart={resetSession} 
           />
         )}
@@ -91,9 +80,9 @@ function WelcomeScreen({ onStart }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-white">
       <div className="text-center space-y-8 max-w-2xl">
-        <h1 className="text-6xl font-bold mb-4 animate-pulse">📸 Photobooth</h1>
+        <h1 className="text-6xl font-bold mb-4 animate-pulse">📸 Snappy</h1>
         <p className="text-2xl mb-8 text-white/90">
-          Capture your perfect moments in 4 classic photos!
+          Capture your perfect moments in you events
         </p>
         
         <div className="space-y-4">
@@ -108,75 +97,7 @@ function WelcomeScreen({ onStart }) {
         <div className="mt-12 text-white/70 text-sm space-y-2">
           <p>✨ 4 photos in classic strip format</p>
           <p>🎨 Customizable borders and text</p>
-          <p>📧 Instant email delivery</p>
           <p>🖼️ Upload your own border image</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Email Entry Screen Component
-function EmailEntryScreen({ onSubmit, onBack }) {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = () => {
-    if (!email) {
-      setError('Please enter your email address');
-      return;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
-      return;
-    }
-    
-    onSubmit(email);
-  };
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh]">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Enter Your Email</h2>
-        <p className="text-gray-600 mb-6">We'll send your photos here when you're done!</p>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError('');
-              }}
-              onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-              placeholder="your@email.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-              autoFocus
-            />
-            {error && (
-              <p className="mt-2 text-sm text-red-600">{error}</p>
-            )}
-          </div>
-          
-          <button
-            onClick={handleSubmit}
-            className="w-full bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition-colors font-medium"
-          >
-            Continue to Customization
-          </button>
-          
-          <button
-            onClick={onBack}
-            className="w-full text-gray-600 hover:text-gray-800 text-sm"
-          >
-            ← Back
-          </button>
         </div>
       </div>
     </div>
@@ -417,27 +338,25 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
         {/* Live Preview Section */}
         <div className="border-t pt-6">
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-            <Frame className="w-4 h-4" />
+            <Frame className="w- h-4 shrink-0" />
             Preview
           </label>
-          <div className="bg-gradient-to-br from-violet-50 to-pink-50 p-6 rounded-lg">
-            <div className="flex justify-center">
-              <div className="scale-[0.35] origin-top">
-                <PhotoStrip 
-                  photos={[
-                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 1%3C/text%3E%3C/svg%3E',
-                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 2%3C/text%3E%3C/svg%3E',
-                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 3%3C/text%3E%3C/svg%3E',
-                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 4%3C/text%3E%3C/svg%3E'
-                  ]} 
-                  settings={settings} 
-                />
-              </div>
+          <div className="bg-gradient-to-br from-violet-50 to-pink-50 p-2 rounded-lg flex justify-center">
+            <div className="flex justify-center w-[150px] sm:w-[200px] md:w-[250px] lg:w-[300px]">
+              <PhotoStrip 
+                photos={[
+                  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 1%3C/text%3E%3C/svg%3E',
+                  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 2%3C/text%3E%3C/svg%3E',
+                  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 3%3C/text%3E%3C/svg%3E',
+                  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e5e7eb" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="32" fill="%239ca3af" text-anchor="middle" dy=".3em"%3EPhoto 4%3C/text%3E%3C/svg%3E'
+                ]}
+                settings={settings} 
+              />
             </div>
-            <p className="text-center text-sm text-gray-600 mt-4">
-              This is how your photo strip will look
-            </p>
           </div>
+          <p className="text-center text-sm text-gray-600 mt-2">
+            This is how your photo strip will look
+          </p>
         </div>
       </div>
       
@@ -844,124 +763,26 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
   const [emailSent, setEmailSent] = useState(false);
   const stripRef = useRef(null);
 
-    const handleDownload = () => {
-    const stripElement = stripRef.current;
-    if (!stripElement) {
-      alert('Unable to generate download. Please try again.');
-      return;
-    }
+  const handleDownload = async () => {
+    if (!stripRef.current) return;
 
-    const SCALE = 3; // 3x higher resolution
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Original preview constants
-    const STRIP_WIDTH = 450;
-    const BORDER_WIDTH = 64;
-    const PADDING = 64;
-    const SPACING = 12;
-    const TEXT_HEIGHT = 80;
-
-    // Scale everything
-    const stripWidth = STRIP_WIDTH * SCALE;
-    const borderWidth = BORDER_WIDTH * SCALE;
-    const padding = PADDING * SCALE;
-    const spacing = SPACING * SCALE;
-    const textHeight = TEXT_HEIGHT * SCALE;
-
-    const photoSize = stripWidth - (borderWidth * 2) - (padding * 2);
-    const photoHeight = photoSize * (3 / 4);
-
-    canvas.width = stripWidth;
-    canvas.height =
-      photoHeight * photos.length +
-      spacing * (photos.length - 1) +
-      padding * 2 +
-      textHeight;
-
-    // Fill background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, stripWidth, canvas.height);
-
-    const drawPhotos = () => {
-      let loadedCount = 0;
-      const xOffset = borderWidth + padding;
-
-      photos.forEach((photoData, index) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-
-        img.onload = () => {
-          const y = padding + index * (photoHeight + spacing);
-
-          // Draw the photo
-          ctx.drawImage(img, xOffset, y, photoSize, photoHeight);
-
-          loadedCount++;
-          if (loadedCount === photos.length) {
-            // Draw text
-            const textColor =
-              settings.borderStyle === 'modern' || settings.borderStyle === 'film'
-                ? '#ffffff'
-                : '#000000';
-
-            ctx.fillStyle = textColor;
-            ctx.textAlign = 'center';
-            ctx.font = `bold ${18 * SCALE}px Arial`;
-            ctx.fillText(settings.customText, stripWidth / 2, canvas.height - 45 * SCALE);
-
-            ctx.font = `${14 * SCALE}px Arial`;
-            ctx.fillText(new Date().toLocaleDateString(), stripWidth / 2, canvas.height - 20 * SCALE);
-
-            // Trigger download
-            canvas.toBlob((blob) => {
-              if (!blob) return alert('Download failed');
-
-              const url = URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.download = `photobooth-strip-${Date.now()}.png`;
-              link.href = url;
-              link.click();
-              URL.revokeObjectURL(url);
-            });
-          }
-        };
-
-        img.onerror = () => {
-          alert('Failed to load photos. Please try again.');
-        };
-
-        img.src = photoData;
+    try {
+      const dataUrl = await toPng(stripRef.current, {
+        cacheBust: true,
+        pixelRatio: 3, // HIGH RES
+        backgroundColor: '#ffffff'
       });
-    };
 
-    const drawBorders = () => {
-      if (settings.borderImage) {
-        const borderImg = new Image();
-        borderImg.crossOrigin = 'anonymous';
-        borderImg.onload = () => {
-          ctx.drawImage(borderImg, 0, 0, borderWidth, canvas.height); // left
-          ctx.drawImage(borderImg, stripWidth - borderWidth, 0, borderWidth, canvas.height); // right
-          drawPhotos();
-        };
-        borderImg.src = settings.borderImage;
-      } else {
-        const style = settings.borderStyle;
-        if (style === 'modern' || style === 'film') {
-          ctx.fillStyle = '#1f2937';
-        } else if (style === 'retro') {
-          ctx.fillStyle = '#fef3c7';
-        } else {
-          ctx.fillStyle = '#f3f4f6';
-        }
-        ctx.fillRect(0, 0, stripWidth, canvas.height);
-        drawPhotos();
-      }
-    };
-
-    drawBorders();
+      const link = document.createElement('a');
+      link.download = `photobooth-strip-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to download image');
+    }
   };
+
 
 
   const handleSendEmail = () => {
