@@ -811,7 +811,7 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
         </div>
         
         <div className="max-w-md mx-auto space-y-4">
-          {!emailSent ? (
+          {/* {!emailSent ? (
             <>
               <button
                 onClick={handleSendEmail}
@@ -849,7 +849,14 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
               </p>
             </div>
           )}
-          
+           */}
+          <button
+            onClick={handleDownload}
+            className="w-full bg-violet-600 text-white px-6 py-4 rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <Download className="w-5 h-5" />
+            Download Now
+          </button>
           <button
             onClick={onRestart}
             className="w-full text-gray-600 hover:text-gray-800 py-3"
