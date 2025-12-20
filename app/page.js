@@ -441,7 +441,6 @@ function CameraView({ onPhotoTaken, countdownSeconds, currentPhotoIndex, isCaptu
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
-    // Desired aspect ratio (same as preview container)
     const targetAspect = 4 / 3;
 
     const videoWidth = video.videoWidth;
@@ -451,20 +450,17 @@ function CameraView({ onPhotoTaken, countdownSeconds, currentPhotoIndex, isCaptu
     let sx, sy, sw, sh;
 
     if (videoAspect > targetAspect) {
-      // Video is wider than target → crop sides
       sh = videoHeight;
       sw = sh * targetAspect;
       sx = (videoWidth - sw) / 2;
       sy = 0;
     } else {
-      // Video is taller than target → crop top/bottom
       sw = videoWidth;
       sh = sw / targetAspect;
       sx = 0;
       sy = (videoHeight - sh) / 2;
     }
 
-    // Output canvas size (matches preview ratio)
     canvas.width = 1200;
     canvas.height = 900;
 
@@ -475,20 +471,13 @@ function CameraView({ onPhotoTaken, countdownSeconds, currentPhotoIndex, isCaptu
       ctx.scale(-1, 1);
     }
 
-    ctx.drawImage(
-      video,
-      sx, sy, sw, sh,          // source crop
-      0, 0, canvas.width, canvas.height // destination
-    );
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
 
     ctx.restore();
 
-    // Flash effect
-    setFlashActive(true);
-    setTimeout(() => setFlashActive(false), 150);
-
     return canvas.toDataURL('image/jpeg', 0.92);
   }, [isMirrored]);
+
 
 
   const startCountdown = useCallback(() => {
@@ -515,23 +504,23 @@ function CameraView({ onPhotoTaken, countdownSeconds, currentPhotoIndex, isCaptu
 
 
   // 🔔 Take photo when countdown reaches 0
-useEffect(() => {
-  if (countdown === 0 && isCapturing && !showGetReady) {
-    const photo = capturePhoto();
-    if (photo) {
-      onPhotoTaken(photo);
-    }
+  useEffect(() => {
+    if (countdown === 0 && isCapturing && !showGetReady) {
+      const photo = capturePhoto();
+      if (photo) {
+        onPhotoTaken(photo);
+      }
 
-    setIsCapturing(false);
-  }
-}, [
-  countdown,
-  isCapturing,
-  showGetReady,
-  capturePhoto,
-  onPhotoTaken,
-  setIsCapturing
-]);
+      setIsCapturing(false);
+    }
+  }, [
+    countdown,
+    isCapturing,
+    showGetReady,
+    capturePhoto,
+    onPhotoTaken,
+    setIsCapturing
+  ]);
 
 
   // Handle initial button click to start session
