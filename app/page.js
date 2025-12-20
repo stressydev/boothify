@@ -31,13 +31,12 @@ export default function PhotoboothApp() {
   const resetSession = () => {
     setPhotos([]);
     setCurrentPhotoIndex(0);
-    setCurrentStep('welcome');
+    setCurrentStep('settings');
     setIsCapturing(false);
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-600 via-purple-600 to-pink-500">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-600 via-purple-600 to-pink-500">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         {currentStep === 'welcome' && (
           <WelcomeScreen onStart={() => setCurrentStep('settings')} />
         )}
@@ -71,8 +70,19 @@ export default function PhotoboothApp() {
           />
         )}
       </div>
+
+        <footer className="py-6 text-center">
+          <div className="inline-block px-6 py-3 rounded-xl backdrop-blur-md bg-white/10 border border-white/20 shadow-lg">
+            <p className="text-white text-sm tracking-wide">
+              Made with <span className="text-pink-300 font-bold">❤</span> & clean code by 
+              <span className="ml-1 font-semibold text-white">Jomar</span>
+            </p>
+          </div>
+        </footer>
+
     </div>
   );
+
 }
 
 // Welcome Screen Component
