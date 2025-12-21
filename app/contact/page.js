@@ -2,6 +2,7 @@
 
 import Navbar from '@/components/NavBar';
 import { useState } from 'react';
+import Footer from '@/components/Footer';
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
@@ -98,6 +99,8 @@ export default function ContactPage() {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
+    
   );
 }
