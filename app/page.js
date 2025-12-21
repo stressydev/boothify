@@ -86,7 +86,7 @@ function WelcomeScreen({ onStart }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-white">
       <div className="text-center space-y-8 max-w-2xl">
-        <h1 className="text-6xl font-bold mb-4 animate-pulse">📸 Photobooth</h1>
+        <h1 className="text-6xl font-bold mb-4 animate-pulse">📸 Boothify</h1>
         <p className="text-2xl mb-8 text-white/90">
           Capture your perfect moments in 4 classic photos!
         </p>
