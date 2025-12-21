@@ -52,7 +52,7 @@ export default function PrivacyPage() {
 
           <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-2">Contact Us</h2>
           <p className="text-gray-700 mb-4">
-            If you have any questions about this Privacy Policy, please contact us at <strong>support@snappy.com</strong>.
+            If you have any questions about this Privacy Policy, please contact us at <strong>support@Boothify.com</strong>.
           </p>
         </div>
       </div>

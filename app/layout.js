@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Snappy - Photobooth for your events",
-  description: "Create a photobooth for your events in minutes with Snappy.",
+  title: "Boothify - Photobooth for your events",
+  description: "Create a photobooth for your events in minutes with Boothify.",
 };
 
 export default function RootLayout({ children }) {
