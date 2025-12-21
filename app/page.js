@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, FlipHorizontal, Loader2, Download, Mail, RotateCcw, Settings, Upload, Type, Frame, X } from 'lucide-react';
 import Navbar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 // Main App Component
 export default function PhotoboothApp() {
   const [currentStep, setCurrentStep] = useState('welcome'); // welcome, email, settings, camera, complete
@@ -77,6 +78,7 @@ export default function PhotoboothApp() {
         )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

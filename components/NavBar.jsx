@@ -1,4 +1,5 @@
 'use client';
+
 export default function Navbar({ onNavigateHome }) {
   return (
     <nav className="sticky top-4 z-50 flex justify-center">
@@ -9,17 +10,26 @@ export default function Navbar({ onNavigateHome }) {
         >
           Home
         </button>
+
         <a
           href="/privacy"
           className="text-gray-700 hover:text-violet-600 font-medium transition-colors"
         >
           Privacy
         </a>
+
         <a
           href="/faq"
           className="text-gray-700 hover:text-violet-600 font-medium transition-colors"
         >
           FAQ
+        </a>
+
+        <a
+          href="/contact"
+          className="text-gray-700 hover:text-violet-600 font-medium transition-colors"
+        >
+          Contact
         </a>
       </div>
     </nav>

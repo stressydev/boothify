@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 
 export default function PrivacyPage() {
   return (
@@ -56,6 +57,7 @@ export default function PrivacyPage() {
           </p>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
