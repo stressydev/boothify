@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, FlipHorizontal, Loader2, Download, Mail, RotateCcw, Settings, Upload, Type, Frame, X } from 'lucide-react';
-import Navbar from '@/components/NavBar';
+
 // Main App Component
 export default function PhotoboothApp() {
   const [currentStep, setCurrentStep] = useState('welcome'); // welcome, email, settings, camera, complete
@@ -37,10 +37,7 @@ export default function PhotoboothApp() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-600 via-purple-600 to-pink-500">
-      <div className="container mx-auto px-4 py-4">
-        <Navbar onNavigateHome={() => setCurrentStep('welcome')} />
-
-      <div className="container mx-auto px-2 py-2 mt-20 mb-10">
+      <div className="container mx-auto px-4 py-8">
         {currentStep === 'welcome' && (
           <WelcomeScreen onStart={() => setCurrentStep('settings')} />
         )}
@@ -75,7 +72,6 @@ export default function PhotoboothApp() {
             onRestart={resetSession} 
           />
         )}
-        </div>
       </div>
     </div>
   );
