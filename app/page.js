@@ -95,7 +95,7 @@ function WelcomeScreen({ onStart }) {
   return (
     <div className="text-white pb-20">
       {/* Hero Section */}
-      <section className="min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12">
+      <section className="min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12" aria-label="Hero section">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Animated Badge */}
           <div className="inline-block mb-2 animate-fade-in">
@@ -155,11 +155,11 @@ function WelcomeScreen({ onStart }) {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4">
+      <section id="features" className="py-20 px-4" aria-labelledby="features-heading">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold mb-4">
+            <h2 id="features-heading" className="text-5xl md:text-6xl font-bold mb-4">
               Why Choose Boothify?
             </h2>
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
@@ -168,81 +168,81 @@ function WelcomeScreen({ onStart }) {
           </div>
 
           {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" role="list"  aria-label="Features list">
             {/* Feature 1 */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20">
+            <article className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20" role="listitem">
               <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-4xl">📸</span>
+                <span className="text-4xl" aria-hidden="true">📸</span>
               </div>
               <h3 className="text-2xl font-bold mb-3">Classic Photo Strips</h3>
               <p className="text-white/80 leading-relaxed">
                 Capture 4 photos in the timeless photo strip format — perfect for events, parties, and cherished memories
               </p>
-            </div>
+            </article>
 
             {/* Feature 2 */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20">
+            <article className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20" role="listitem">
               <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-4xl">🎨</span>
+                <span className="text-4xl" aria-hidden="true">🎨</span>
               </div>
               <h3 className="text-2xl font-bold mb-3">Custom Designs</h3>
               <p className="text-white/80 leading-relaxed">
                 Personalize with stylish borders, custom text, and upload your own frame designs
               </p>
-            </div>
+            </article>
 
             {/* Feature 3 */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20">
+            <article className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20" role="listitem">
               <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-4xl">⚡</span>
+                <span className="text-4xl" aria-hidden="true">⚡</span>
               </div>
               <h3 className="text-2xl font-bold mb-3">Instant Download</h3>
               <p className="text-white/80 leading-relaxed">
                 Get your photo strip instantly — no waiting, no sign-up required, just pure fun
               </p>
-            </div>
+            </article>
 
             {/* Feature 4 */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20">
+            <article className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20" role="listitem">
               <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-4xl">⏱️</span>
+                <span className="text-4xl" aria-hidden="true">⏱️</span>
               </div>
               <h3 className="text-2xl font-bold mb-3">Perfect Timing</h3>
               <p className="text-white/80 leading-relaxed">
                 Set your countdown timer and strike the perfect pose for every shot
               </p>
-            </div>
+            </article>
 
             {/* Feature 5 */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20">
+            <article className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20" role="listitem">
               <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-4xl">👁️</span>
+                <span className="text-4xl" aria-hidden="true">👁️</span>
               </div>
               <h3 className="text-2xl font-bold mb-3">Live Preview</h3>
               <p className="text-white/80 leading-relaxed">
                 See exactly how your photos will look with real-time camera preview
               </p>
-            </div>
+            </article>
 
             {/* Feature 6 */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20">
+            <article className="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/20 transition-all duration-300 hover:scale-105 border border-white/20" role="listitem">
               <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-4xl">💯</span>
+                <span className="text-4xl" aria-hidden="true">💯</span>
               </div>
               <h3 className="text-2xl font-bold mb-3">100% Free</h3>
               <p className="text-white/80 leading-relaxed">
                 No hidden costs, no subscriptions — completely free photobooth experience forever
               </p>
-            </div>
+            </article>
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4" aria-labelledby="how-it-works-heading">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold mb-4">
+            <h2 id="how-it-works-heading" className="text-5xl md:text-6xl font-bold mb-4">
               How It Works
             </h2>
             <p className="text-xl text-white/80">
@@ -250,7 +250,7 @@ function WelcomeScreen({ onStart }) {
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-8" role="list" aria-label="Steps to create photo strip">
             {/* Step 1 */}
             <div className="flex flex-col md:flex-row items-center gap-8 bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
               <div className="flex-shrink-0 bg-white text-cyan-600 w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold">
