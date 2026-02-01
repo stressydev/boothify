@@ -3,6 +3,24 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, FlipHorizontal, Loader2, Download, Mail, RotateCcw, Settings, Upload, Type, Frame, X } from 'lucide-react';
 import Navbar from '@/components/NavBar';
 import Footer from '@/components/Footer';
+
+// Helper function for font families (used by multiple components)
+const getFontFamily = (style) => {
+  const fontFamilies = {
+    modern: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    classic: '"Playfair Display", Georgia, serif',
+    playful: 'Caveat, cursive',
+    elegant: '"Dancing Script", cursive',
+    bold: '"Archivo Black", Impact, sans-serif',
+    handwritten: 'Pacifico, cursive',
+    retro: 'Orbitron, monospace',
+    minimal: 'Raleway, sans-serif',
+    comic: '"Permanent Marker", cursive',
+    fancy: '"Playfair Display", Georgia, serif'
+  };
+  return fontFamilies[style] || fontFamilies.modern;
+};
+
 // Main App Component
 export default function PhotoboothApp() {
   const [currentStep, setCurrentStep] = useState('welcome'); // welcome, email, settings, camera, complete
@@ -427,22 +445,6 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
       fancy: 'font-style-fancy'
     };
     return fontMap[style] || 'font-style-modern';
-  };
-
-  const getFontFamily = (style) => {
-    const fontFamilies = {
-      modern: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      classic: '"Playfair Display", Georgia, serif',
-      playful: 'Caveat, cursive',
-      elegant: '"Dancing Script", cursive',
-      bold: '"Archivo Black", Impact, sans-serif',
-      handwritten: 'Pacifico, cursive',
-      retro: 'Orbitron, monospace',
-      minimal: 'Raleway, sans-serif',
-      comic: '"Permanent Marker", cursive',
-      fancy: '"Playfair Display", Georgia, serif'
-    };
-    return fontFamilies[style] || fontFamilies.modern;
   };
 
   const getBorderPreviewClass = (style) => {
