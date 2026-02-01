@@ -415,18 +415,34 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
 
   const getFontClass = (style) => {
     const fontMap = {
-      modern: 'font-sans',
-      classic: 'font-serif',
-      playful: 'font-mono',
-      elegant: 'font-serif italic',
-      bold: 'font-sans font-bold',
-      handwritten: 'font-mono italic',
-      retro: 'font-serif font-bold',
-      minimal: 'font-sans font-light tracking-wide',
-      comic: 'font-mono font-bold',
-      fancy: 'font-serif italic font-semibold'
+      modern: 'font-style-modern',
+      classic: 'font-style-classic',
+      playful: 'font-style-playful',
+      elegant: 'font-style-elegant',
+      bold: 'font-style-bold',
+      handwritten: 'font-style-handwritten',
+      retro: 'font-style-retro',
+      minimal: 'font-style-minimal',
+      comic: 'font-style-comic',
+      fancy: 'font-style-fancy'
     };
-    return fontMap[style] || 'font-sans';
+    return fontMap[style] || 'font-style-modern';
+  };
+
+  const getFontFamily = (style) => {
+    const fontFamilies = {
+      modern: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      classic: '"Playfair Display", Georgia, serif',
+      playful: 'Caveat, cursive',
+      elegant: '"Dancing Script", cursive',
+      bold: '"Archivo Black", Impact, sans-serif',
+      handwritten: 'Pacifico, cursive',
+      retro: 'Orbitron, monospace',
+      minimal: 'Raleway, sans-serif',
+      comic: '"Permanent Marker", cursive',
+      fancy: '"Playfair Display", Georgia, serif'
+    };
+    return fontFamilies[style] || fontFamilies.modern;
   };
 
   const getBorderPreviewClass = (style) => {
@@ -571,7 +587,7 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
                 }`}
               >
                 <div className="text-sm font-medium">{style.label}</div>
-                <div className={`text-xs text-gray-500 mt-1 ${getFontClass(style.value)}`}>
+                <div className={`text-xs text-gray-500 mt-1 ${getFontClass(style.value)}`} style={{ fontFamily: getFontFamily(style.value), fontSize: '20px' }}>
                   {style.preview}
                 </div>
               </button>
@@ -641,7 +657,7 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-2 text-center text-white py-1">
+                    <div className="mt-2 text-center text-white py-1" style={{ fontFamily: getFontFamily(settings.fontStyle) }}>
                       <p className="text-[10px] font-medium">{settings.customText}</p>
                       <p className="text-[8px] opacity-80">{new Date().toLocaleDateString()}</p>
                     </div>
@@ -657,12 +673,12 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
                         </div>
                       ))}
                     </div>
-                    <div className={`mt-2 text-center py-1 ${getBorderTextColor(settings.borderStyle)}`}>
+                    <div className={`mt-2 text-center py-1 ${getBorderTextColor(settings.borderStyle)}`} style={{ fontFamily: getFontFamily(settings.fontStyle) }}>
                       <p className="text-[10px] font-medium">{settings.customText}</p>
                       <p className="text-[8px]">{new Date().toLocaleDateString()}</p>
                     </div>
                   </div>
-                </div>
+                </div>  
               )}
             </div>
           </div>
@@ -953,16 +969,16 @@ useEffect(() => {
 // Photo Strip Component
 function PhotoStrip({ photos, settings }) {
   const fontStyles = {
-    modern: 'font-sans',
-    classic: 'font-serif',
-    playful: 'font-mono',
-    elegant: 'font-serif italic',
-    bold: 'font-sans font-bold',
-    handwritten: 'font-mono italic',
-    retro: 'font-serif font-bold',
-    minimal: 'font-sans font-light tracking-wide',
-    comic: 'font-mono font-bold',
-    fancy: 'font-serif italic font-semibold'
+    modern: 'font-style-modern',
+    classic: 'font-style-classic',
+    playful: 'font-style-playful',
+    elegant: 'font-style-elegant',
+    bold: 'font-style-bold',
+    handwritten: 'font-style-handwritten',
+    retro: 'font-style-retro',
+    minimal: 'font-style-minimal',
+    comic: 'font-style-comic',
+    fancy: 'font-style-fancy'
   };
 
   const borderConfigs = {
@@ -1038,7 +1054,7 @@ function PhotoStrip({ photos, settings }) {
                 </div>
               ))}
             </div>
-            <div className={`mt-3 text-center ${fontStyles[settings.fontStyle]} text-white py-2 border-t border-white/20`}>
+            <div className={`mt-3 text-center ${fontStyles[settings.fontStyle]} text-white py-2 border-t border-white/20`} style={{ fontFamily: getFontFamily(settings.fontStyle) }}>
               <p className="text-sm font-semibold">
                 {settings.customText}
               </p>
@@ -1058,7 +1074,7 @@ function PhotoStrip({ photos, settings }) {
                 </div>
               ))}
             </div>
-            <div className={`pb-3 text-center ${fontStyles[settings.fontStyle]} ${config.textColor} border-t border-gray-200/50 pt-2 px-4`}>
+            <div className={`pb-3 text-center ${fontStyles[settings.fontStyle]} ${config.textColor} border-t border-gray-200/50 pt-2 px-4`} style={{ fontFamily: getFontFamily(settings.fontStyle) }}>
               <p className="text-sm font-semibold">
                 {settings.customText}
               </p>
