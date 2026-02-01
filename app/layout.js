@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Playfair_Display, Caveat, Archivo_Black, Pacifico, Orbitron, Raleway, Permanent_Marker, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
@@ -12,6 +12,57 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Font styles for photo booth
+const inter = Inter({
+  variable: "--font-modern",
+  subsets: ["latin"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-classic",
+  subsets: ["latin"],
+});
+
+const caveat = Caveat({
+  variable: "--font-playful",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const dancingScript = Dancing_Script({
+  variable: "--font-elegant",
+  subsets: ["latin"],
+});
+
+const archivoBlack = Archivo_Black({
+  variable: "--font-bold",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const pacifico = Pacifico({
+  variable: "--font-handwritten",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const orbitron = Orbitron({
+  variable: "--font-retro",
+  subsets: ["latin"],
+});
+
+const raleway = Raleway({
+  variable: "--font-minimal",
+  subsets: ["latin"],
+  weight: ["300", "400"],
+});
+
+const permanentMarker = Permanent_Marker({
+  variable: "--font-comic",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 // app/layout.tsx
@@ -147,7 +198,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${caveat.variable} ${dancingScript.variable} ${archivoBlack.variable} ${pacifico.variable} ${orbitron.variable} ${raleway.variable} ${permanentMarker.variable} antialiased`}
       >
         {children}
         <SpeedInsights />
