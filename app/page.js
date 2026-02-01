@@ -1138,8 +1138,24 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     ctx.fillStyle = settings.borderImage ? '#000000' : '#ffffff';
     ctx.fillRect(0, 0, stripWidth, canvas.height);
 
+    // Helper function to draw rounded rectangle
+    const drawRoundedRect = (x, y, width, height, radius) => {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    };
+
     const drawPhotos = () => {
       let loadedCount = 0;
+      const borderRadius = 8 * SCALE; // Rounded corners
 
       photos.forEach((photoData, index) => {
         const img = new Image();
@@ -1153,7 +1169,16 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
             const borderImg = new Image();
             borderImg.crossOrigin = 'anonymous';
             borderImg.onload = () => {
-              // Draw border frame
+              // Draw border frame with rounded corners
+              ctx.save();
+              drawRoundedRect(
+                outerPadding,
+                yPosition,
+                photoWidth,
+                photoHeight + borderThickness * 2,
+                borderRadius
+              );
+              ctx.clip();
               ctx.drawImage(
                 borderImg,
                 outerPadding,
@@ -1161,8 +1186,18 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
                 photoWidth,
                 photoHeight + borderThickness * 2
               );
+              ctx.restore();
 
-              // Draw photo inside border
+              // Draw photo inside border with rounded corners
+              ctx.save();
+              drawRoundedRect(
+                outerPadding + borderThickness,
+                yPosition + borderThickness,
+                photoWidth - borderThickness * 2,
+                photoHeight,
+                borderRadius
+              );
+              ctx.clip();
               ctx.drawImage(
                 img,
                 outerPadding + borderThickness,
@@ -1170,6 +1205,7 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
                 photoWidth - borderThickness * 2,
                 photoHeight
               );
+              ctx.restore();
 
               loadedCount++;
               if (loadedCount === photos.length) {
@@ -1178,7 +1214,16 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
             };
             borderImg.src = settings.borderImage;
           } else {
-            // Draw photo without custom border
+            // Draw photo without custom border with rounded corners
+            ctx.save();
+            drawRoundedRect(
+              outerPadding,
+              yPosition,
+              photoWidth,
+              photoHeight,
+              borderRadius
+            );
+            ctx.clip();
             ctx.drawImage(
               img,
               outerPadding,
@@ -1186,6 +1231,7 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
               photoWidth,
               photoHeight
             );
+            ctx.restore();
 
             loadedCount++;
             if (loadedCount === photos.length) {
@@ -1207,10 +1253,13 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
       const textColor = settings.borderImage ? '#ffffff' : '#000000';
       ctx.fillStyle = textColor;
       ctx.textAlign = 'center';
-      ctx.font = `bold ${18 * SCALE}px Arial`;
+      
+      // Use the selected font style
+      const fontFamily = getFontFamily(settings.fontStyle);
+      ctx.font = `bold ${18 * SCALE}px ${fontFamily}`;
       ctx.fillText(settings.customText, stripWidth / 2, canvas.height - 45 * SCALE);
 
-      ctx.font = `${14 * SCALE}px Arial`;
+      ctx.font = `${14 * SCALE}px ${fontFamily}`;
       ctx.fillText(new Date().toLocaleDateString(), stripWidth / 2, canvas.height - 20 * SCALE);
 
       // Trigger download
