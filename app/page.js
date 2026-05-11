@@ -634,55 +634,18 @@ function SettingsPanel({ settings, setSettings, userEmail, onStart, onBack }) {
         <div className="border-t pt-6">
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
             <Frame className="w-4 h-4" />
-            Preview
+            Preview (Exact match to download)
           </label>
           <div className="bg-gradient-to-br from-violet-50 to-pink-50 p-4 rounded-lg flex justify-center">
-            <div className="w-[200px]">
-              {settings.borderImage ? (
-                <div className="bg-black shadow-xl rounded">
-                  <div className="p-2">
-                    <div className="space-y-1.5">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div key={i}>
-                          <div 
-                            className="p-3"
-                            style={{
-                              backgroundImage: `url(${settings.borderImage})`,
-                              backgroundSize: 'cover',
-                              backgroundPosition: 'center'
-                            }}
-                          >
-                            <div className="w-full aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                              <span className="text-gray-500 text-xs">Photo {i}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-2 text-center text-white py-1" style={{ fontFamily: getFontFamily(settings.fontStyle) }}>
-                      <p className="text-[10px] font-medium">{settings.customText}</p>
-                      <p className="text-[8px] opacity-80">{new Date().toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className={getBorderPreviewClass(settings.borderStyle)}>
-                  <div className="p-2">
-                    <div className="space-y-1.5">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="w-full aspect-square bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded">
-                          <span className="text-gray-500 text-xs">Photo {i}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className={`mt-2 text-center py-1 ${getBorderTextColor(settings.borderStyle)}`} style={{ fontFamily: getFontFamily(settings.fontStyle) }}>
-                      <p className="text-[10px] font-medium">{settings.customText}</p>
-                      <p className="text-[8px]">{new Date().toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                </div>  
-              )}
-            </div>
+            <PhotoStrip 
+              photos={[
+                'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 fill=%22%239ca3af%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EPhoto 1%3C/text%3E%3C/svg%3E',
+                'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23d1d5db%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 fill=%22%239ca3af%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EPhoto 2%3C/text%3E%3C/svg%3E',
+                'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 fill=%22%239ca3af%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EPhoto 3%3C/text%3E%3C/svg%3E',
+                'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23d1d5db%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 fill=%22%239ca3af%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EPhoto 4%3C/text%3E%3C/svg%3E'
+              ]}
+              settings={settings}
+            />
           </div>
         </div>
       </div>
@@ -1026,8 +989,8 @@ function PhotoStrip({ photos, settings }) {
     },
     gradient: {
       wrapper: 'bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 p-8 shadow-2xl',
-      inner: 'bg-white border-4 border-white',
-      textColor: 'text-gray-800'
+      inner: 'bg-transparent',
+      textColor: 'text-white'
     }
   };
 
@@ -1109,36 +1072,117 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    // New constants for border around each photo
-    const STRIP_WIDTH = 450;
-    const OUTER_PADDING = 24; // Black background padding
-    const BORDER_THICKNESS = 24; // Border thickness around each photo
-    const PHOTO_SPACING = 16; // Space between photos
-    const TEXT_HEIGHT = 80;
+    const downloadStyles = {
+      classic: {
+        wrapper: { type: 'linear', colors: ['#f8fafc', '#e2e8f0'] },
+        inner: '#ffffff',
+        borderColor: '#ffffff',
+        borderWidth: 8 * SCALE,
+        textColor: '#1f2937'
+      },
+      modern: {
+        wrapper: { type: 'linear', colors: ['#111827', '#000000'] },
+        inner: '#1f2937',
+        borderColor: '#374151',
+        borderWidth: 8 * SCALE,
+        textColor: '#ffffff'
+      },
+      retro: {
+        wrapper: { type: 'linear', colors: ['#fde68a', '#fef3c7'] },
+        inner: '#fffbeb',
+        borderColor: '#fef3c7',
+        borderWidth: 10 * SCALE,
+        textColor: '#92400e'
+      },
+      polaroid: {
+        wrapper: { type: 'linear', colors: ['#e2e8f0', '#cbd5e1'] },
+        inner: '#ffffff',
+        borderColor: '#ffffff',
+        borderWidth: 32 * SCALE,
+        textColor: '#1f2937'
+      },
+      film: {
+        wrapper: { type: 'linear', colors: ['#111827', '#0f172a'] },
+        inner: '#000000',
+        borderColor: '#374151',
+        borderWidth: 8 * SCALE,
+        textColor: '#d1d5db'
+      },
+      minimal: {
+        wrapper: '#ffffff',
+        inner: '#ffffff',
+        borderColor: '#e5e7eb',
+        borderWidth: 4 * SCALE,
+        textColor: '#1f2937'
+      },
+      neon: {
+        wrapper: { type: 'linear', colors: ['#7c3aed', '#ec4899'] },
+        inner: '#000000',
+        borderColor: '#ec4899',
+        borderWidth: 8 * SCALE,
+        textColor: '#f472b6'
+      },
+      vintage: {
+        wrapper: { type: 'linear', colors: ['#f5f3e7', '#fde68a'] },
+        inner: '#ffffff',
+        borderColor: '#92400e',
+        borderWidth: 10 * SCALE,
+        textColor: '#292524'
+      },
+      gradient: {
+        wrapper: { type: 'linear', colors: ['#22d3ee', '#a855f7', '#ec4899'] },
+        inner: 'transparent',
+        borderColor: 'transparent',
+        borderWidth: 0,
+        textColor: '#ffffff'
+      }
+    };
 
-    // Scale everything
+    const config = settings.borderImage ? null : (downloadStyles[settings.borderStyle] || downloadStyles.classic);
+    const isCustom = !!settings.borderImage;
+    const wrapperPadding = isCustom ? 12 * SCALE : 32 * SCALE;
+    const innerPadding = isCustom ? 12 * SCALE : 16 * SCALE;
+    const photoSpacing = 8 * SCALE;
+    const footerHeight = 56 * SCALE;
+    const STRIP_WIDTH = 280;
     const stripWidth = STRIP_WIDTH * SCALE;
-    const outerPadding = OUTER_PADDING * SCALE;
-    const borderThickness = BORDER_THICKNESS * SCALE;
-    const photoSpacing = PHOTO_SPACING * SCALE;
-    const textHeight = TEXT_HEIGHT * SCALE;
-
-    // Photo dimensions (4:3 aspect ratio)
-    const photoWidth = (stripWidth - (outerPadding * 2));
-    const photoHeight = photoWidth * (3 / 4);
+    const photoWidth = stripWidth - wrapperPadding * 2 - innerPadding * 2;
+    const photoHeight = Math.round(photoWidth * (3 / 4));
+    const photoAreaHeight = photos.length * photoHeight + (photos.length - 1) * photoSpacing;
+    const innerHeight = innerPadding * 2 + photoAreaHeight + footerHeight;
 
     canvas.width = stripWidth;
-    canvas.height =
-      (photoHeight + borderThickness * 2) * photos.length +
-      photoSpacing * (photos.length - 1) +
-      outerPadding * 2 +
-      textHeight;
+    canvas.height = wrapperPadding * 2 + innerHeight;
 
-    // Fill background (black for custom borders)
-    ctx.fillStyle = settings.borderImage ? '#000000' : '#ffffff';
+    const createGradient = (colors) => {
+      const gradient = ctx.createLinearGradient(0, 0, stripWidth, canvas.height);
+      colors.forEach((color, index) => gradient.addColorStop(index / (colors.length - 1), color));
+      return gradient;
+    };
+
+    if (isCustom) {
+      ctx.fillStyle = '#000000';
+    } else if (typeof config.wrapper === 'string') {
+      ctx.fillStyle = config.wrapper;
+    } else {
+      ctx.fillStyle = createGradient(config.wrapper.colors);
+    }
     ctx.fillRect(0, 0, stripWidth, canvas.height);
 
-    // Helper function to draw rounded rectangle
+    const innerX = wrapperPadding;
+    const innerY = wrapperPadding;
+    const innerWidth = stripWidth - wrapperPadding * 2;
+
+    if (!isCustom) {
+      ctx.fillStyle = config.inner;
+      ctx.fillRect(innerX, innerY, innerWidth, innerHeight);
+      if (config.borderWidth > 0) {
+        ctx.strokeStyle = config.borderColor;
+        ctx.lineWidth = config.borderWidth;
+        ctx.strokeRect(innerX + config.borderWidth / 2, innerY + config.borderWidth / 2, innerWidth - config.borderWidth, innerHeight - config.borderWidth);
+      }
+    }
+
     const drawRoundedRect = (x, y, width, height, radius) => {
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
@@ -1155,58 +1199,25 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
 
     const drawPhotos = () => {
       let loadedCount = 0;
-      const borderRadius = 8 * SCALE; // Rounded corners
+      const borderRadius = 12 * SCALE;
+      const photoX = innerX + innerPadding;
 
       photos.forEach((photoData, index) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
 
         img.onload = () => {
-          const yPosition = outerPadding + index * (photoHeight + borderThickness * 2 + photoSpacing);
+          const yPosition = innerY + innerPadding + index * (photoHeight + photoSpacing);
 
-          if (settings.borderImage) {
-            // Draw border around photo
+          if (isCustom) {
             const borderImg = new Image();
             borderImg.crossOrigin = 'anonymous';
             borderImg.onload = () => {
-              // Draw border frame with rounded corners
-              ctx.save();
-              drawRoundedRect(
-                outerPadding,
-                yPosition,
-                photoWidth,
-                photoHeight + borderThickness * 2,
-                borderRadius
-              );
-              ctx.clip();
-              ctx.drawImage(
-                borderImg,
-                outerPadding,
-                yPosition,
-                photoWidth,
-                photoHeight + borderThickness * 2
-              );
-              ctx.restore();
-
-              // Draw photo inside border with rounded corners
-              ctx.save();
-              drawRoundedRect(
-                outerPadding + borderThickness,
-                yPosition + borderThickness,
-                photoWidth - borderThickness * 2,
-                photoHeight,
-                borderRadius
-              );
-              ctx.clip();
-              ctx.drawImage(
-                img,
-                outerPadding + borderThickness,
-                yPosition + borderThickness,
-                photoWidth - borderThickness * 2,
-                photoHeight
-              );
-              ctx.restore();
-
+              ctx.fillStyle = '#f3f4f6';
+              drawRoundedRect(photoX, yPosition, photoWidth, photoHeight, borderRadius);
+              ctx.fill();
+              ctx.drawImage(borderImg, photoX - 8 * SCALE, yPosition - 8 * SCALE, photoWidth + 16 * SCALE, photoHeight + 16 * SCALE);
+              ctx.drawImage(img, photoX, yPosition, photoWidth, photoHeight);
               loadedCount++;
               if (loadedCount === photos.length) {
                 finishDrawing();
@@ -1214,25 +1225,11 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
             };
             borderImg.src = settings.borderImage;
           } else {
-            // Draw photo without custom border with rounded corners
             ctx.save();
-            drawRoundedRect(
-              outerPadding,
-              yPosition,
-              photoWidth,
-              photoHeight,
-              borderRadius
-            );
+            drawRoundedRect(photoX, yPosition, photoWidth, photoHeight, borderRadius);
             ctx.clip();
-            ctx.drawImage(
-              img,
-              outerPadding,
-              yPosition,
-              photoWidth,
-              photoHeight
-            );
+            ctx.drawImage(img, photoX, yPosition, photoWidth, photoHeight);
             ctx.restore();
-
             loadedCount++;
             if (loadedCount === photos.length) {
               finishDrawing();
@@ -1249,23 +1246,33 @@ function CompleteScreen({ photos, settings, userEmail, onRestart }) {
     };
 
     const finishDrawing = () => {
-      // Draw text at bottom
-      const textColor = settings.borderImage ? '#ffffff' : '#000000';
+      const footerTop = innerY + innerPadding + photoAreaHeight + 12 * SCALE;
+      const textColor = isCustom ? '#ffffff' : config.textColor;
+      const fontFamily = getFontFamily(settings.fontStyle);
+      
+      // Draw divider line with better styling
+      const isDarkBg = ['modern', 'film', 'neon'].includes(settings.borderStyle) || isCustom;
+      const dividerColor = isDarkBg ? '#ffffff' : '#e5e7eb';
+      const dividerOpacity = isCustom ? 0.4 : 1;
+      
+      ctx.strokeStyle = isDarkBg ? `rgba(255,255,255,${dividerOpacity})` : dividerColor;
+      ctx.lineWidth = 2 * SCALE;
+      ctx.beginPath();
+      ctx.moveTo(innerX + innerPadding, footerTop);
+      ctx.lineTo(innerX + innerWidth - innerPadding, footerTop);
+      ctx.stroke();
+
       ctx.fillStyle = textColor;
       ctx.textAlign = 'center';
-      
-      // Use the selected font style
-      const fontFamily = getFontFamily(settings.fontStyle);
+      ctx.textBaseline = 'middle';
       ctx.font = `bold ${18 * SCALE}px ${fontFamily}`;
-      ctx.fillText(settings.customText, stripWidth / 2, canvas.height - 45 * SCALE);
+      ctx.fillText(settings.customText, stripWidth / 2, footerTop + 20 * SCALE);
 
       ctx.font = `${14 * SCALE}px ${fontFamily}`;
-      ctx.fillText(new Date().toLocaleDateString(), stripWidth / 2, canvas.height - 20 * SCALE);
+      ctx.fillText(new Date().toLocaleDateString(), stripWidth / 2, footerTop + 36 * SCALE);
 
-      // Trigger download
       canvas.toBlob((blob) => {
         if (!blob) return alert('Download failed');
-
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `photobooth-strip-${Date.now()}.png`;
